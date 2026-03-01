@@ -62,7 +62,7 @@ int main() {
     }
 
     string name = "Ilan Tchachoua";
-    string bday = "01011997"; // Your birthday [cite: 5]
+    string bday = "01011997"; // Your birthday 
 
     cout << "--- Euler Sequence Finder ---" << endl;
     
@@ -73,7 +73,7 @@ int main() {
     else
         cout << "Birthday not found in this digit set." << endl;
 
-    // ASCII Transversion [cite: 4]
+    // ASCII Transversion 
     string asciiName = "";
     for (char c : name) {
         asciiName += to_string((int)c);
