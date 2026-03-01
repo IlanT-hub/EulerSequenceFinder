@@ -1,0 +1,3 @@
+//i orginially wanted to use an array but i think a vector is more efficient for this problem  a resizable, self‑managing container, which is safer and more flexible than a raw array for this kind of variable‑length data.
+// https://www.youtube.com/watch?v=ynv7bbcSLKE
+// I found an effective way to find the Euler sequence using KMP algorithm, which is a string searching algorithm that can be used to find occurrences of a "pattern" within a "text". In this case, we can treat the Euler sequence as the pattern and the sequence of numbers as the text. The KMP algorithm allows us to efficiently search for the pattern in the text without having to backtrack, which can significantly reduce the time complexity of our search.
