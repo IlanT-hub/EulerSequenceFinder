@@ -1,88 +1,108 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
+#include <chrono>
+#include <vector>
 
 using namespace std;
+using namespace std::chrono;
 
-void computeLPS(string pattern, m, int lps[]){
-    int len = 0
-    lps[0] = 0; // lps[0] is always 0
+// Preprocessing: O(m) time and space
+void computeLPS(const string& pattern, vector<int>& lps) {
+    int m = pattern.length();
+    int len = 0;
+    lps[0] = 0;
     int i = 1;
     while (i < m) {
         if (pattern[i] == pattern[len]) {
             len++;
             lps[i] = len;
             i++;
-        }
-        else {
-            if (len != 0) {
-                len = lps[len - 1];
-            }
-            else {
-                lps[i] = 0;
-                i++;
-            }
+        } else {
+            if (len != 0) len = lps[len - 1];
+            else { lps[i] = 0; i++; }
         }
     }
 }
- 
-int KMPSearch(string text, string pattern) {
+
+// Searching: O(n) time
+int KMPSearch(const string& text, const string& pattern) {
     int n = text.length();
     int m = pattern.length();
     if (m == 0) return 0;
 
-    int* lps = new int[m]; 
-    computeLPS(pattern, m, lps);
+    vector<int> lps(m);
+    computeLPS(pattern, lps);
 
     int i = 0, j = 0;
-    int result = -1;
     while (i < n) {
         if (pattern[j] == text[i]) { i++; j++; }
-        if (j == m) {
-            result = i - j;
-            break; 
-        } else if (i < n && pattern[j] != text[i]) {
+        if (j == m) return i - j;
+        else if (i < n && pattern[j] != text[i]) {
             if (j != 0) j = lps[j - 1];
             else i++;
         }
     }
-    delete[] lps; 
-    return result;
+    return -1;
 }
 
 int main() {
     ifstream file("e_digits.txt");
     string e_digits;
-    if (file.is_open()) {
-        getline(file, e_digits);
+    
+    cout << "Loading 100 million digits... Please wait." << endl;
+    if (file >> e_digits) {
         file.close();
     } else {
         cout << "Error: Place e_digits.txt in the project folder." << endl;
         return 1;
     }
 
-    string name = "Ilan Tchachoua";
-    string bday = "01011997"; // Your birthday 
+    string query;
+    cout << "\n--- Euler Sequence Search UI ---" << endl;
+    cout << "Enter the sequence to find (e.g., 01012005): ";
+    cin >> query;
 
-    cout << "--- Euler Sequence Finder ---" << endl;
-    
-    // Birthday Search
-    int bdayIndex = KMPSearch(e_digits, bday);
-    if(bdayIndex != -1)
-        cout << "In Euler's number, your birthday is located here: " << bdayIndex << endl;
+    // Start Search
+    auto start = high_resolution_clock::now();
+    int index = KMPSearch(e_digits, query);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    cout << "\n--- Search Results ---" << endl;
+    if(index != -1)
+        cout << "Sequence " << query << " found at index: " << index << endl;
     else
-        cout << "Birthday not found in this digit set." << endl;
+        cout << "Sequence not found in the first 100M digits." << endl;
 
-    // ASCII Transversion 
+    cout << "Search completed in " << duration.count() << " microseconds." << endl;
+
+
+    string name;
+    cout << "Enter your full name: ";
+    cin.ignore(); // Clear the buffer from previous cin
+    getline(cin, name);
+
     string asciiName = "";
     for (char c : name) {
+    
         asciiName += to_string((int)c);
     }
     
+    cout << "\n--- ASCII Conversion ---" << endl;
+    cout << "Your name in ASCII is: " << asciiName << endl;
+
+    auto startName = high_resolution_clock::now();
     int nameIndex = KMPSearch(e_digits, asciiName);
-    cout << "For name in ASCII transversion, your name is: " << asciiName << endl;
+    auto stopName = high_resolution_clock::now();
+    auto durationName = duration_cast<microseconds>(stopName - startName);
+
     if(nameIndex != -1)
-        cout << "Your name is located here: " << nameIndex << endl;
+        cout << "Sequence located at index: " << nameIndex << endl;
+    else
+        cout << "Sequence not found in the first 1M digits." << endl;
+
+    cout << "Search Time: " << durationName.count() << " microseconds" << endl;
 
     return 0;
-}
+ }
